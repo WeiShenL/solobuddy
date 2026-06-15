@@ -15,6 +15,7 @@ SoloBuddy is a travel companion app built for solo travellers. It combines desti
 
 Download the latest Android APK from our Expo build page:
 
+📱 [Download APK (Android)](https://expo.dev/accounts/weishenlo/projects/solobuddy/builds/bc191881-1980-47f3-9707-a38f69bf6419)
 
 ## Prerequisites
 
