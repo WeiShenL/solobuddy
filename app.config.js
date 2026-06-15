@@ -5,13 +5,13 @@ export default {
     slug: "solobuddy",
     version: "1.0.0",
     orientation: "portrait",
-    scheme: "project",
+    scheme: "solobuddy",
     assetBundlePatterns: ["**/*"],
     userInterfaceStyle: "automatic",
     ios: {
       newArchEnabled: true,
       supportsTablet: true,
-      bundleIdentifier: "com.anonymous.project",
+      bundleIdentifier: "com.weishenl.solobuddy",
       config: {
         googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
       },
@@ -27,7 +27,7 @@ export default {
           apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
         },
       },
-      "package": "com.anonymous.project",
+      "package": "com.weishenl.solobuddy",
     },
     web: {
       bundler: "metro",
@@ -42,10 +42,5 @@ export default {
         },
       ],
     ],
-    extra: {
-      eas: {
-        "projectId": "27b2b561-c8f3-4802-b274-98889698f45f"
-      }
-    }
   },
 };
