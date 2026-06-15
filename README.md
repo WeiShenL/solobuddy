@@ -1,9 +1,9 @@
 # SoloBuddy, your Travel Safety Companion
 
 <p align="center">
-  <img src="" width="190" alt="Explore tab with map" />
+  <img src="https://github.com/user-attachments/assets/525ab536-5642-4c01-88c0-26c53d024071" width="190" alt="Explore tab with map" />
 <!--   <img src="URL_safety" width="240" alt="Safety advisories and news" /> -->
-  <img src="" width="190" alt="AI-generated itinerary" />
+  <img src="https://github.com/user-attachments/assets/b4a5a080-f1e6-4620-ac7c-0d54ce424460" width="190" alt="AI-generated itinerary" />
 </p>
 <p align="center">
   <em>Explore</em> &nbsp;·&nbsp; <em>AI Itinerary</em>
