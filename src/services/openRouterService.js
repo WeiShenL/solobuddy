@@ -1,6 +1,6 @@
 const OPENROUTER_API_KEY = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY;
 // if need chnge model; that's sickkkk
-const MODEL = "openai/gpt-oss-120b:free";
+const MODEL = "google/gemma-4-26b-a4b-it:free";
 
 export async function generateItineraryACB(items) {
   // i remove the imageURL and description and visited to save tokens. each attraction one item in content list
@@ -64,9 +64,12 @@ export async function generateItineraryACB(items) {
   });
 
   console.log("OpenRouter response status:", response.status);
+  console.log("OpenRouter model used:", MODEL);
+  console.log("OpenRouter key present:", Boolean(OPENROUTER_API_KEY), "prefix:", OPENROUTER_API_KEY?.slice(0, 10));
 
   if (!response.ok) {
     const errorBody = await response.text();
+    console.error("[OpenRouter] error body:", errorBody);
     throw new Error(`OpenRouter error (${response.status}): ${errorBody}`);
   }
 
