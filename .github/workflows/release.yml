@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          ref: main
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
@@ -35,7 +35,7 @@ jobs:
       - name: Bump patch version
         id: bump
         run: |
-          CURRENT=$(node -p "require('./app.config.js').default.expo.version")
+          CURRENT=$(grep -m1 -oE 'version: *"[0-9]+\.[0-9]+\.[0-9]+"' app.config.js | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
           NEW=$(node -e "
             const p = '$CURRENT'.split('.').map(Number);
             p[2] += 1;
@@ -62,7 +62,7 @@ jobs:
           echo "apk_url=$URL" >> "$GITHUB_OUTPUT"
 
       - name: Download APK
-        run: curl -L -o app.apk "${{ steps.extract.outputs.apk_url }}"
+        run: curl -L -o solobuddy.v${{ steps.bump.outputs.version }}.apk "${{ steps.extract.outputs.apk_url }}"
 
       - name: Create Git tag
         run: |
@@ -73,5 +73,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.bump.outputs.version }}
-          files: app.apk
-          generate_release_notes: true
+          name: Solobuddy v${{ steps.bump.outputs.version }}
+          target_commitish: main
+          body: |
+            SoloBuddy is a travel companion app built for travellers.
+            Latest Version: v${{ steps.bump.outputs.version }}
+            Android only APK, sideload.
+          files: solobuddy.v${{ steps.bump.outputs.version }}.apk
