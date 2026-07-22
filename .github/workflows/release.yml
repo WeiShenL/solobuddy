@@ -49,7 +49,9 @@ jobs:
           echo "version=$NEW" >> "$GITHUB_OUTPUT"
 
       - name: Build APK on EAS
-        run: eas build --platform android --profile preview --non-interactive --wait 2>&1 | tee build.log
+        run: |
+          set -o pipefail
+          eas build --platform android --profile preview --non-interactive --wait 2>&1 | tee build.log
 
       - name: Extract APK URL
         id: extract
