@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'LICENSE'
 
 jobs:
   build:
@@ -44,6 +48,19 @@ jobs:
           sed -i "s/version: \"$CURRENT\"/version: \"$NEW\"/" app.config.js
           echo "version=$NEW" >> "$GITHUB_OUTPUT"
 
+      - name: Build APK on EAS
+        run: eas build --platform android --profile preview --non-interactive --wait 2>&1 | tee build.log
+
+      - name: Extract APK URL
+        id: extract
+        run: |
+          eas build:list --platform android --limit 1 --status finished --non-interactive --json > build-output.json
+          URL=$(node -p "JSON.parse(require('fs').readFileSync('build-output.json'))[0].artifacts.buildUrl")
+          echo "apk_url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Download APK
+        run: curl -L -o solobuddy.v${{ steps.bump.outputs.version }}.apk "${{ steps.extract.outputs.apk_url }}"
+
       - name: Commit version bump
         run: |
           git config user.name "github-actions[bot]"
@@ -51,18 +68,6 @@ jobs:
           git add app.config.js
           git commit -m "chore: bump version to ${{ steps.bump.outputs.version }}"
           git push
-
-      - name: Build APK on EAS
-        run: eas build --platform android --profile preview --non-interactive --wait --json > build-output.json
-
-      - name: Extract APK URL
-        id: extract
-        run: |
-          URL=$(node -p "JSON.parse(require('fs').readFileSync('build-output.json'))[0].artifacts.buildUrl")
-          echo "apk_url=$URL" >> "$GITHUB_OUTPUT"
-
-      - name: Download APK
-        run: curl -L -o solobuddy.v${{ steps.bump.outputs.version }}.apk "${{ steps.extract.outputs.apk_url }}"
 
       - name: Create Git tag
         run: |
