@@ -6,7 +6,7 @@ import {
   toggleLikePost,
   deleteCommunityPost,
 } from "../services/communityService.js";
-import CommunityView from "../native-views/communityView.jsx";
+import CommunityView from "../native-views/communityView.js";
 
 export const CommunityPresenter = observer(function CommunityPresenter({ model }) {
   const [postModalVisible, setPostModalVisible] = useState(false);

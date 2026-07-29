@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import WishlistView from "../native-views/wishlistView.jsx";
+import WishlistView from "../native-views/wishlistView.js";
 
 export const WishlistPresenter = observer(function WishlistPresenter({ model }) {
   // the wishlist is kept in sync with Firestore by firebaseModel (tied to auth),

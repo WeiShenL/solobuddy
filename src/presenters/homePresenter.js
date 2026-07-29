@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { HomeView } from "../native-views/homeView.jsx";
+import { HomeView } from "../native-views/homeView.js";
 import { searchPlacesByTextACB } from "../services/placesService.js";
 
 const HomePresenter = observer(function HomePresenter(props) {

@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
-import CommunityPostModal from "./communityPostModal.jsx";
+import CommunityPostModal from "./communityPostModal.js";
 import { shared } from "./sharedStyles.js";
 
 const CATEGORIES = {

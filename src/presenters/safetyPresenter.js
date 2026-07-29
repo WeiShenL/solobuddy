@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { SafetyView } from "../native-views/safetyView.jsx";
+import { SafetyView } from "../native-views/safetyView.js";
 import { getUSAdvisoryId } from "../services/usAdvisoryCountryMap.js";
 
 const SafetyPresenter = observer(function SafetyPresenter(props) {

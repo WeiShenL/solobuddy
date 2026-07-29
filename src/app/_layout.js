@@ -4,7 +4,7 @@ import { model } from "../model.js"
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { connectToAuth } from "../firebaseModel.js";
-import AuthPresenter from "../presenters/authPresenter.jsx";
+import AuthPresenter from "../presenters/authPresenter.js";
 import { Image } from "react-native"
 
 export default observer(function RootLayout() {

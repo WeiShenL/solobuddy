@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { observer } from "mobx-react-lite";
 import { model } from "../model.js";
 
-import HomePresenter from "../presenters/homePresenter.jsx";
+import HomePresenter from "../presenters/homePresenter.js";
 
 export default observer(function ExplorePage() {
   return (

@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { observer } from "mobx-react-lite";
 import { model } from "../model.js";
-import SafetyPresenter from "../presenters/safetyPresenter.jsx";
+import SafetyPresenter from "../presenters/safetyPresenter.js";
 
 export default observer(function SafetyPage() {
   return (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import * as ImagePicker from "expo-image-picker";
-import { AuthView } from "../native-views/authView.jsx";
+import { AuthView } from "../native-views/authView.js";
 
 // handles both login, register, logout.
 //   props.model - the reactive MobX model
@@ -57,7 +57,7 @@ const AuthPresenter = observer(function AuthPresenter(props) {
             } else {
                 await model.loginUser(email, password);
             }
-            // onauthstatechanged in _layout.jsx handles updating model.currentUser
+            // onauthstatechanged in _layout.js handles updating model.currentUser
         } catch (error) {
             const code = error.code ?? "";
             if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found" || code === "auth/invalid-email") {

@@ -2,8 +2,8 @@ import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import * as ImagePicker from "expo-image-picker";
 import { model } from "../model.js";
-import ProfileView from "../native-views/profileView.jsx";
-import ProfileEditView from "../native-views/profileEditView.jsx";
+import ProfileView from "../native-views/profileView.js";
+import ProfileEditView from "../native-views/profileEditView.js";
 
 export default observer(function ProfilePresenter() {
   const user = model.currentUser;
