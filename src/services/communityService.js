@@ -1,66 +1,71 @@
-import {
-  collection,
-  addDoc,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
-import { db } from "../firebaseModel.js";
+// Demo in-memory replacement for the Firestore-backed community feed, used
+// only on this Snack-preview branch — see firebaseModel.js for why the real
+// Firebase SDK can't be bundled by Snackager.
 
-let unsubscribeCommunity = null;
+let posts = [
+  {
+    id: "post-1",
+    authorUid: "demo-uid-2",
+    authorName: "Alex",
+    authorAvatar: "",
+    text: "Just got back from Kyoto, the bamboo forest at dawn is unreal.",
+    locationTag: "Kyoto, Japan",
+    category: "experience",
+    likedBy: [],
+    createdAt: null,
+  },
+];
+
+const listeners = new Set();
+
+function notify() {
+  listeners.forEach((fn) => fn([...posts]));
+}
 
 export function listenToCommunityPosts(onUpdate) {
-  if (unsubscribeCommunity) {
-    unsubscribeCommunity();
-    unsubscribeCommunity = null;
-  }
-  const q = query(collection(db, "communityPosts"), orderBy("createdAt", "desc"));
-  unsubscribeCommunity = onSnapshot(
-    q,
-    (snap) => {
-      const posts = [];
-      snap.forEach((d) => posts.push({ id: d.id, ...d.data() }));
-      onUpdate(posts);
-    },
-    (err) => {
-      console.error("community listener error", err);
-      onUpdate([]);
-    }
-  );
-  return () => {
-    if (unsubscribeCommunity) {
-      unsubscribeCommunity();
-      unsubscribeCommunity = null;
-    }
+  listeners.add(onUpdate);
+  onUpdate([...posts]);
+  return function cleanup() {
+    listeners.delete(onUpdate);
   };
 }
 
 export function addCommunityPost(uid, authorName, authorAvatar, text, locationTag, category) {
-  return addDoc(collection(db, "communityPosts"), {
-    authorUid: uid,
-    authorName: authorName || "Anonymous",
-    authorAvatar: authorAvatar || "",
-    text,
-    locationTag: locationTag || "",
-    category: category || "experience",
-    likedBy: [],
-    createdAt: serverTimestamp(),
-  });
+  posts = [
+    {
+      id: `post-${Date.now()}`,
+      authorUid: uid,
+      authorName: authorName || "Anonymous",
+      authorAvatar: authorAvatar || "",
+      text,
+      locationTag: locationTag || "",
+      category: category || "experience",
+      likedBy: [],
+      createdAt: null,
+    },
+    ...posts,
+  ];
+  notify();
+  return Promise.resolve();
 }
 
-export async function toggleLikePost(postId, uid, currentlyLiked) {
-  const postRef = doc(db, "communityPosts", postId);
-  return updateDoc(postRef, {
-    likedBy: currentlyLiked ? arrayRemove(uid) : arrayUnion(uid),
-  });
+export function toggleLikePost(postId, uid, currentlyLiked) {
+  posts = posts.map((p) =>
+    p.id === postId
+      ? {
+          ...p,
+          likedBy: currentlyLiked
+            ? p.likedBy.filter((id) => id !== uid)
+            : [...p.likedBy, uid],
+        }
+      : p
+  );
+  notify();
+  return Promise.resolve();
 }
 
 export function deleteCommunityPost(postId) {
-  return deleteDoc(doc(db, "communityPosts", postId));
+  posts = posts.filter((p) => p.id !== postId);
+  notify();
+  return Promise.resolve();
 }

@@ -1,227 +1,140 @@
-import { initializeApp, getApps } from "firebase/app";
-import {
-  initializeAuth,
-  getAuth,
-  getReactNativePersistence,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc,
-  deleteDoc,
-  updateDoc,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-} from "firebase/firestore";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// Demo in-memory replacement for Firebase, used only on this Snack-preview
+// branch. The Firebase JS SDK depends on modules Snackager cannot bundle for
+// the Snack runtime, and .env is gitignored anyway (no keys ship to Snack),
+// so this fakes the same call shape (auth + profile + wishlist) that
+// model.js and the presenters already expect, backed by module-level state
+// instead of a real backend. Auto-logs in a seeded demo user on connect.
 
-import { firebaseConfig } from "./firebaseConfig.js";
-
-// I made some changes here to make it easier for testing when swtiching bnetween rpoject ids. (i had some issues)
-const existingApp = getApps().find(
-  (appInstance) => appInstance.options.projectId === firebaseConfig.projectId
-);
-const app = existingApp ?? initializeApp(firebaseConfig, firebaseConfig.projectId);
-
-// for debug, for some reason on my phone I'm still connected to the prev firebase
-// console.log("Firebase Project ID:", app.options.projectId);
-// console.log("Firebase API Key:", app.options.apiKey);
-
-// on React Native getAuth defaults to in-memory persistence, so the session is
-// lost when the app is killed. initializeAuth with AsyncStorage persists it.
-// it must run only once per app instance, so fall back to getAuth on re-runs (hot reload).
-function initAuthWithPersistence(firebaseApp) {
-  try {
-    return initializeAuth(firebaseApp, {
-      persistence: getReactNativePersistence(AsyncStorage),
-    });
-  } catch {
-    return getAuth(firebaseApp);
-  }
+function makeDemoUser(email) {
+  return {
+    uid: "demo-uid",
+    email: email || "demo@solobuddy.app",
+    displayName: "",
+    photoURL: "",
+    phoneNumber: "",
+  };
 }
 
-export const auth = initAuthWithPersistence(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+let currentUser = makeDemoUser();
+let profile = {
+  email: currentUser.email,
+  name: "Demo Traveler",
+  birthday: "1996-04-12",
+  phone: "",
+  avatarUrl: "",
+  wishlist: [],
+  visitedPlaces: [],
+  createdAt: null,
+};
+let wishlist = [
+  {
+    id: "demo-1",
+    name: "Eiffel Tower",
+    location: "Paris, France",
+    imageUrl: "https://placehold.co/300x200.png?text=Eiffel+Tower",
+    description: "Iconic Parisian landmark.",
+    userRating: 4.7,
+    lat: 48.8584,
+    lng: 2.2945,
+    visited: false,
+    createdAt: null,
+  },
+  {
+    id: "demo-2",
+    name: "Shibuya Crossing",
+    location: "Tokyo, Japan",
+    imageUrl: "https://placehold.co/300x200.png?text=Shibuya",
+    description: "World's busiest pedestrian crossing.",
+    userRating: 4.5,
+    lat: 35.6595,
+    lng: 139.7005,
+    visited: true,
+    createdAt: null,
+  },
+];
 
-let unsubscribeProfile = null;
-let unsubscribeWishlist = null;
+const authListeners = new Set();
 
 export function connectToAuth(model) {
-  const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-    if (unsubscribeProfile) {
-      unsubscribeProfile();
-      unsubscribeProfile = null;
-    }
-    if (unsubscribeWishlist) {
-      unsubscribeWishlist();
-      unsubscribeWishlist = null;
-    }
-
-    if (user) {
-      model.setCurrentUser({
-        uid: user.uid,
-        email: user.email || "",
-        displayName: user.displayName || "",
-        photoURL: user.photoURL || "",
-        phoneNumber: user.phoneNumber || "",
-      });
-
-      const profileRef = doc(db, "users", user.uid);
-
-      unsubscribeProfile = onSnapshot(
-        profileRef,
-        async (snapshot) => {
-          if (snapshot.exists()) {
-            model.setProfile(snapshot.data());
-          } else {
-            const starterProfile = {
-              email: user.email || "",
-              name: user.displayName || "",
-              birthday: "",
-              phone: user.phoneNumber || "",
-              avatarUrl: user.photoURL || "",
-              wishlist: [],
-              visitedPlaces: [],
-              createdAt: serverTimestamp(),
-            };
-
-            await setDoc(profileRef, starterProfile);
-            model.setProfile({
-              ...starterProfile,
-              createdAt: null,
-            });
-          }
-        },
-        (error) => {
-          console.error("Error listening to profile:", error);
-          model.clearProfile();
-        }
-      );
-
-      // keep the wishlist in sync for the logged-in user; teardown happens above
-      // on the next auth change (logout or account switch)
-      unsubscribeWishlist = listenToWishlist(user.uid, (items) => {
-        model.setWishlist(items);
-      });
+  function emitAuthState() {
+    if (currentUser) {
+      model.setCurrentUser(currentUser);
+      model.setProfile(profile);
+      model.setWishlist(wishlist);
     } else {
       model.resetUserState();
       model.setWishlist([]);
     }
+    if (!model.ready) model.setReady(true);
+  }
 
-    if (!model.ready) {
-      model.setReady(true);
-    }
-  });
+  authListeners.add(emitAuthState);
+  emitAuthState();
 
   return function cleanup() {
-    if (unsubscribeProfile) {
-      unsubscribeProfile();
-      unsubscribeProfile = null;
-    }
-    if (unsubscribeWishlist) {
-      unsubscribeWishlist();
-      unsubscribeWishlist = null;
-    }
-    unsubscribeAuth();
+    authListeners.delete(emitAuthState);
   };
 }
 
-export async function signUpWithEmail(email, password) {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+function notifyAuth() {
+  authListeners.forEach((fn) => fn());
+}
 
-  await setDoc(doc(db, "users", userCredential.user.uid), {
-    email: userCredential.user.email || "",
+export async function signInWithEmail(email) {
+  currentUser = makeDemoUser(email);
+  notifyAuth();
+  return { user: currentUser };
+}
+
+export async function signUpWithEmail(email) {
+  currentUser = makeDemoUser(email);
+  profile = {
+    email: currentUser.email,
     name: "",
     birthday: "",
     phone: "",
     avatarUrl: "",
     wishlist: [],
     visitedPlaces: [],
-    createdAt: serverTimestamp(),
-  });
-
-  return userCredential;
+    createdAt: null,
+  };
+  notifyAuth();
+  return { user: currentUser };
 }
 
-// sign in an existing user with email and password
-export function signInWithEmail(email, password) {
-  return signInWithEmailAndPassword(auth, email, password);
+export async function signOutUser() {
+  currentUser = null;
+  notifyAuth();
 }
 
-// sign out the current user
-export function signOutUser() {
-  return signOut(auth);
+export async function saveUserProfile(uid, patch) {
+  profile = { ...profile, ...patch };
+  notifyAuth();
 }
 
-export function saveUserProfile(uid, profilePatch) {
-  return setDoc(doc(db, "users", uid), profilePatch, { merge: true });
-}
-
-// func to upload photo
 export async function uploadProfilePhoto(uri, uid) {
-  const response = await fetch(uri);
-  const blob = await response.blob();
-
-  const imageRef = ref(storage, `users/${uid}/profile-photo-${Date.now()}.jpg`);
-
-  await uploadBytes(imageRef, blob, { contentType: "image/jpeg" });
-
-  const downloadURL = await getDownloadURL(imageRef);
-
-  await saveUserProfile(uid, { avatarUrl: downloadURL });
-
-  return downloadURL;
+  // Snack can't reach Firebase Storage; keep the locally picked image URI.
+  await saveUserProfile(uid, { avatarUrl: uri });
+  return uri;
 }
-
-// --- wishlist persistence (one item per doc under users/{uid}/wishlist) ---
 
 export function setWishlistItem(uid, item) {
-  const itemRef = doc(db, "users", uid, "wishlist", item.id);
-  return setDoc(itemRef, { ...item, visited: false, createdAt: serverTimestamp() });
+  wishlist = [
+    { ...item, visited: false, createdAt: null },
+    ...wishlist.filter((w) => w.id !== item.id),
+  ];
+  notifyAuth();
+  return Promise.resolve();
 }
 
 export function markWishlistItemVisited(uid, itemId, visited) {
-  const itemRef = doc(db, "users", uid, "wishlist", itemId);
-  return updateDoc(itemRef, { visited });
+  wishlist = wishlist.map((w) => (w.id === itemId ? { ...w, visited } : w));
+  notifyAuth();
+  return Promise.resolve();
 }
 
 export function removeWishlistItem(uid, itemId) {
-  const itemRef = doc(db, "users", uid, "wishlist", itemId);
-  return deleteDoc(itemRef);
+  wishlist = wishlist.filter((w) => w.id !== itemId);
+  notifyAuth();
+  return Promise.resolve();
 }
-
-// subscribe to a user's wishlist; returns an unsubscribe function
-export function listenToWishlist(uid, onUpdate) {
-  const q = query(
-    collection(db, "users", uid, "wishlist"),
-    orderBy("createdAt", "desc")
-  );
-  return onSnapshot(
-    q,
-    (snap) => {
-      const items = [];
-      snap.forEach((d) => items.push({ id: d.id, ...d.data() }));
-      onUpdate(items);
-    },
-    (err) => {
-      console.error("wishlist listener error", err);
-      onUpdate([]);
-    }
-  );
-}
-
-
