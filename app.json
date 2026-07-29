@@ -7,8 +7,13 @@
     "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
     "scheme": "solobuddy",
-    "assetBundlePatterns": ["**/*"],
     "userInterfaceStyle": "automatic",
+    "icon": "./src/assets/login-logo.png",
+    "splash": {
+      "image": "./src/assets/login-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#7D5A50"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.weishenl.solobuddy"
