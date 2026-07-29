@@ -28,7 +28,7 @@ import {
 } from "firebase/storage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { firebaseConfig } from "/src/firebaseConfig.js";
+import { firebaseConfig } from "./firebaseConfig.js";
 
 // I made some changes here to make it easier for testing when swtiching bnetween rpoject ids. (i had some issues)
 const existingApp = getApps().find(

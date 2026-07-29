@@ -3,7 +3,7 @@ import { Text } from "react-native"
 import { model } from "../model.js"
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { connectToAuth } from "/src/firebaseModel.js";
+import { connectToAuth } from "../firebaseModel.js";
 import AuthPresenter from "../presenters/authPresenter.jsx";
 import { Image } from "react-native"
 
