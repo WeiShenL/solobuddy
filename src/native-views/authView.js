@@ -43,7 +43,7 @@ export function AuthView(props) {
             keyboardShouldPersistTaps="handled"
         >
             <Image
-                source={require("../assets/login-logo.png")}
+                source={{ uri: "https://placehold.co/64x64.png" }}
                 style={styles.logo}
                 resizeMode="contain"
             />

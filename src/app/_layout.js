@@ -43,7 +43,7 @@ export default observer(function RootLayout() {
                     tabBarIcon: function renderExploreTabIconACB({ size }) {
                         return (
                         <Image
-                            source={require("../assets/explore-icon.png")}
+                            source={{ uri: "https://placehold.co/64x64.png" }}
                             style={{ width: size, height: size }}
                             resizeMode="contain"
                         />
@@ -62,7 +62,7 @@ export default observer(function RootLayout() {
                     tabBarIcon: function renderSafetyTabIconACB({ size }) {
                         return (
                         <Image
-                            source={require("../assets/safety-icon.png")}
+                            source={{ uri: "https://placehold.co/64x64.png" }}
                             style={{ width: size, height: size }}
                             resizeMode="contain"
                         />
@@ -82,7 +82,7 @@ export default observer(function RootLayout() {
                     tabBarIcon: function renderCommunityTabIconACB({ size }) {
                         return (
                         <Image
-                            source={require("../assets/community-icon.png")}
+                            source={{ uri: "https://placehold.co/64x64.png" }}
                             style={{ width: size, height: size }}
                             resizeMode="contain"
                         />
@@ -101,8 +101,8 @@ export default observer(function RootLayout() {
                     tabBarIcon: function renderWishlistTabIconACB({ size }) {
                         return (
                         <Image
-                            source={require("../assets/wishlist-icon.png")}
-                            // source={require("../assets/explore-icon.png")}
+                            source={{ uri: "https://placehold.co/64x64.png" }}
+                            // source={{ uri: "https://placehold.co/64x64.png" }}
                             style={{ width: size, height: size }}
                             resizeMode="contain"
                         />
@@ -121,7 +121,7 @@ export default observer(function RootLayout() {
                     tabBarIcon: function renderProfileTabIconACB({ size }) {
                         return (
                         <Image
-                            source={require("../assets/profile-icon.png")}
+                            source={{ uri: "https://placehold.co/64x64.png" }}
                             style={{ width: size, height: size }}
                             resizeMode="contain"
                         />
