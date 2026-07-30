@@ -29,8 +29,8 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       }
       const place = [model.currentCity, model.currentCountry].filter(Boolean).join(" ") || null;
       if (!place) return;
-      // change here for different query.... but search results arent rlly good tbvh
-      model.fetchNews(place);
+      // TODO: change here for different query.... but search results arent rlly good tbvh
+      model.fetchNews(`${place} news only`);
     } catch (error) {
       console.error("Failed to refresh news:", error);
     }

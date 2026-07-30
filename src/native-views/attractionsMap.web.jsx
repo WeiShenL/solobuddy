@@ -1,13 +1,45 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import { APIProvider, Map, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, AdvancedMarker, InfoWindow, useMap } from "@vis.gl/react-google-maps";
 
 const GOOGLE_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
+
+function MapController({ focusedSearchResult, searchResults, setSelectedMarker }) {
+  const map = useMap();
+
+  useEffect(function panToFocusedResultACB() {
+    if (!map || !focusedSearchResult) return;
+    if (!Number.isFinite(focusedSearchResult.latitude) || !Number.isFinite(focusedSearchResult.longitude)) return;
+
+    map.panTo({ lat: focusedSearchResult.latitude, lng: focusedSearchResult.longitude });
+    map.setZoom(15);
+    setSelectedMarker(focusedSearchResult);
+  }, [map, focusedSearchResult, setSelectedMarker]);
+
+  useEffect(function panToSearchResultsACB() {
+    if (!map || !searchResults?.length || focusedSearchResult) return;
+    const valid = searchResults.filter((r) => Number.isFinite(r.latitude) && Number.isFinite(r.longitude));
+    if (!valid.length) return;
+
+    if (valid.length === 1) {
+      map.panTo({ lat: valid[0].latitude, lng: valid[0].longitude });
+      map.setZoom(14);
+    } else {
+      const avgLat = valid.reduce((sum, r) => sum + r.latitude, 0) / valid.length;
+      const avgLng = valid.reduce((sum, r) => sum + r.longitude, 0) / valid.length;
+      map.panTo({ lat: avgLat, lng: avgLng });
+      map.setZoom(11);
+    }
+  }, [map, searchResults, focusedSearchResult]);
+
+  return null;
+}
 
 export function AttractionsMap({
   attractions,
   onSelectAttraction,
   searchResults,
+  focusedSearchResult,
 }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
 
@@ -71,34 +103,39 @@ export function AttractionsMap({
         <APIProvider apiKey={GOOGLE_API_KEY}>
           <Map
             style={{ width: "100%", height: "100%" }}
-            center={center}
+            defaultCenter={center}
             defaultZoom={allMarkers.length > 0 ? 11 : 3}
             mapId="attractions-map"
           >
-            {mappableAttractions.map(function renderAttractionMarkerACB(attraction) {
-              return (
-                <AdvancedMarker
-                  key={`attraction-${String(attraction.id ?? attraction.name)}`}
-                  position={{ lat: attraction.latitude, lng: attraction.longitude }}
-                  title={attraction.name}
-                  onClick={function onClickACB() { handleMarkerClickACB(attraction); }}
-                />
-              );
-            })}
-
-            {mappableSearchResults.map(function renderSearchMarkerACB(result) {
-              return (
-                <AdvancedMarker
-                  key={`search-${String(result.id ?? result.name)}`}
-                  position={{ lat: result.latitude, lng: result.longitude }}
-                  title={result.name}
-                  onClick={function onClickACB() { handleMarkerClickACB(result); }}
-                >
-                  {/* blue pin to distinguish search results from regular attractions */}
-                  <View style={styles.bluePin} />
-                </AdvancedMarker>
-              );
-            })}
+            <MapController
+              focusedSearchResult={focusedSearchResult}
+              searchResults={searchResults}
+              setSelectedMarker={setSelectedMarker}
+            />
+            {mappableSearchResults.length > 0
+              ? mappableSearchResults.map(function renderSearchMarkerACB(result) {
+                  return (
+                    <AdvancedMarker
+                      key={`search-${String(result.id ?? result.name)}`}
+                      position={{ lat: result.latitude, lng: result.longitude }}
+                      title={result.name}
+                      onClick={function onClickACB() { handleMarkerClickACB(result); }}
+                    >
+                      {/* blue pin to distinguish search results from regular attractions */}
+                      <View style={styles.bluePin} />
+                    </AdvancedMarker>
+                  );
+                })
+              : mappableAttractions.map(function renderAttractionMarkerACB(attraction) {
+                  return (
+                    <AdvancedMarker
+                      key={`attraction-${String(attraction.id ?? attraction.name)}`}
+                      position={{ lat: attraction.latitude, lng: attraction.longitude }}
+                      title={attraction.name}
+                      onClick={function onClickACB() { handleMarkerClickACB(attraction); }}
+                    />
+                  );
+                })}
 
             {selectedMarker && (
               <InfoWindow

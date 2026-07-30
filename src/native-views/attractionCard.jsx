@@ -26,11 +26,14 @@ function getRatingMeta(rating) {
   };
 }
 
-export function AttractionCard({ attraction, onSeeMore, cardWidth }) {
+export function AttractionCard({ attraction, onSeeMore, onSelectCard, cardWidth }) {
   const safety = getRatingMeta(attraction.userRating);
 
   return (
-    <View style={[styles.card, cardWidth ? { width: cardWidth } : null]}>
+    <Pressable
+      style={({ pressed }) => [styles.card, cardWidth ? { width: cardWidth } : null, pressed && { opacity: 0.95 }]}
+      onPress={() => onSelectCard?.(attraction)}
+    >
       <Image
         source={{ // found some stock image to use as a fallback
           uri:
@@ -84,7 +87,7 @@ export function AttractionCard({ attraction, onSeeMore, cardWidth }) {
           <Text style={styles.seeMoreText}>See More</Text>
         </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

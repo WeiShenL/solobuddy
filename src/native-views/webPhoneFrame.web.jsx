@@ -3,7 +3,7 @@ import { View } from "react-native";
 // - "rn"        : react-native-device-mockup — pure RN Views
 // - "mockframe" : react-mockframe — DOM-based, iPhone 17 w/ Dynamic Island.
 
-const VARIANT = "rn";
+const VARIANT = "mockframe";
 
 export function WebPhoneFrame({ children }) {
     return <View style={styles.backdrop}>{renderVariant(children)}</View>;

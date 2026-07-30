@@ -76,6 +76,11 @@ export function HomeView(props) {
     props.onCloseAttractionDetails?.();
   }
 
+  function handleSelectAttractionCardACB(attraction) {
+    handleMapClearACB();
+    setFocusedSearchResult(attraction);
+  }
+
   function renderAttractionRowACB({ item, index }) {
     const inputRange = [
       (index - 1) * fullWidth,
@@ -111,6 +116,7 @@ export function HomeView(props) {
           onSeeMore={function onSeeMorePressACB() {
             userWantsToSeeMoreACB(item);
           }}
+          onSelectCard={handleSelectAttractionCardACB}
           cardWidth={cardWidth}
         />
       </Animated.View>
@@ -233,6 +239,7 @@ export function HomeView(props) {
                     style={styles.searchResultInfo}
                     onPress={function onPressSearchResultACB() {
                       setFocusedSearchResult(result);
+                      setShowResultsList(false);
                     }}
                   >
                     <Text style={styles.searchResultName}>{result.name}</Text>

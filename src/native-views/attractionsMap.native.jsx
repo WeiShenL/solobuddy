@@ -24,6 +24,7 @@ export function AttractionsMap({
 }) {
   const mapRef = useRef(null);
   const searchMarkerRefs = useRef({});
+  const attractionMarkerRefs = useRef({});
   const [userLocation, setUserLocation] = useState(null);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
@@ -74,12 +75,13 @@ export function AttractionsMap({
       {
         latitude: focusedSearchResult.latitude,
         longitude: focusedSearchResult.longitude,
-        latitudeDelta: 0.02,
-        longitudeDelta: 0.02,
+        latitudeDelta: 0.008,
+        longitudeDelta: 0.008,
       },
       600
     );
     searchMarkerRefs.current[key]?.showCallout();
+    attractionMarkerRefs.current[key]?.showCallout();
   }, [focusedSearchResult]);
 
   // when search results arrive, animate the map to fit them all
@@ -180,36 +182,38 @@ export function AttractionsMap({
           />
         ) : null}
 
-        {mappableAttractions.map(function renderAttractionMarkerACB(attraction) {
-          return (
-            <Marker
-              key={`attraction-${String(attraction.id ?? attraction.name)}`}
-              coordinate={{ latitude: attraction.latitude, longitude: attraction.longitude }}
-              title={attraction.name}
-              description={attraction.location || ""}
-              onPress={function onMarkerPressACB() {
-                onSelectAttraction?.(attraction);
-              }}
-            />
-          );
-        })}
-
-        {mappableSearchResults.map(function renderSearchMarkerACB(result) {
-          const key = String(result.id ?? result.name);
-          return (
-            <Marker
-              key={`search-${key}`}
-              ref={function setMarkerRefACB(ref) { searchMarkerRefs.current[key] = ref; }}
-              coordinate={{ latitude: result.latitude, longitude: result.longitude }}
-              title={result.name}
-              description={result.location || ""}
-              pinColor="#0ea5e9"
-              onPress={function onSearchMarkerPressACB() {
-                onSelectAttraction?.(result);
-              }}
-            />
-          );
-        })}
+        {mappableSearchResults.length > 0
+          ? mappableSearchResults.map(function renderSearchMarkerACB(result) {
+              const key = String(result.id ?? result.name);
+              return (
+                <Marker
+                  key={`search-${key}`}
+                  ref={function setMarkerRefACB(ref) { searchMarkerRefs.current[key] = ref; }}
+                  coordinate={{ latitude: result.latitude, longitude: result.longitude }}
+                  title={result.name}
+                  description={result.location || ""}
+                  pinColor="#0ea5e9"
+                  onPress={function onSearchMarkerPressACB() {
+                    onSelectAttraction?.(result);
+                  }}
+                />
+              );
+            })
+          : mappableAttractions.map(function renderAttractionMarkerACB(attraction) {
+              const key = String(attraction.id ?? attraction.name);
+              return (
+                <Marker
+                  key={`attraction-${key}`}
+                  ref={function setMarkerRefACB(ref) { attractionMarkerRefs.current[key] = ref; }}
+                  coordinate={{ latitude: attraction.latitude, longitude: attraction.longitude }}
+                  title={attraction.name}
+                  description={attraction.location || ""}
+                  onPress={function onMarkerPressACB() {
+                    onSelectAttraction?.(attraction);
+                  }}
+                />
+              );
+            })}
       </MapView>
 
       {isLoadingLocation ? (
