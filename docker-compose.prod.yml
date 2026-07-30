@@ -12,8 +12,14 @@ x-logging: &default-logging
 services:
   solobuddy-web:
     container_name: solobuddy-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/weishenl/solobuddy-web:latest
+    env_file:
+      - .env
     logging: *default-logging
-    ports: [] # Public ports 80/443 are owned by Root Caddy on VPS
+    ports: !reset [] # Public ports 80/443 are owned by Root Caddy on VPS
     networks:
       - default
       - web-gateway

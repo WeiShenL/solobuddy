@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { initializeApp, getApps } from "firebase/app";
 import {
   initializeAuth,
@@ -44,6 +45,9 @@ const app = existingApp ?? initializeApp(firebaseConfig, firebaseConfig.projectI
 // lost when the app is killed. initializeAuth with AsyncStorage persists it.
 // it must run only once per app instance, so fall back to getAuth on re-runs (hot reload).
 function initAuthWithPersistence(firebaseApp) {
+  if (Platform.OS === "web") {
+    return getAuth(firebaseApp);
+  }
   try {
     return initializeAuth(firebaseApp, {
       persistence: getReactNativePersistence(AsyncStorage),
