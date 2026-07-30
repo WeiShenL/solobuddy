@@ -4,10 +4,28 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+# Set unique placeholder tokens for static compilation (Firebase API Key uses a 39-character mock placeholder starting with AIzaSy to pass build-time validation)
+ENV EXPO_PUBLIC_FIREBASE_API_KEY=AIzaSyA1b2C3d4E5f6G7h8I9j0K1HELLO4O5p6Q
+ENV EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=__EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN__
+ENV EXPO_PUBLIC_FIREBASE_PROJECT_ID=__EXPO_PUBLIC_FIREBASE_PROJECT_ID__
+ENV EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=__EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET__
+ENV EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=__EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID__
+ENV EXPO_PUBLIC_FIREBASE_APP_ID=__EXPO_PUBLIC_FIREBASE_APP_ID__
+ENV EXPO_PUBLIC_GOOGLE_API_KEY=__EXPO_PUBLIC_GOOGLE_API_KEY__
+ENV EXPO_PUBLIC_NEWS_API_KEY=__EXPO_PUBLIC_NEWS_API_KEY__
+ENV EXPO_PUBLIC_OPENROUTER_API_KEY=__EXPO_PUBLIC_OPENROUTER_API_KEY__
+
 RUN npx expo export --platform web
 
 # Serve static production files via Caddy
 FROM caddy:alpine
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /app/dist /usr/share/caddy
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 EXPOSE 80
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
