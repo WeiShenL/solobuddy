@@ -27,6 +27,7 @@ export default observer(function RootLayout() {
     }
 
     const currentUserName = model.profile?.name || "there";
+    const targetLocation = model.currentCity || model.currentCountry;
 
     // logged in
     return (
@@ -41,7 +42,7 @@ export default observer(function RootLayout() {
                             backgroundColor: "#7D5A50",
                         },
                         headerTintColor: "#fff", // text color
-                        headerTitle: model.currentCity ? `Hey ${currentUserName}, let's explore ${model.currentCity}!` : `Hey ${currentUserName}, let's explore!`,
+                        headerTitle: targetLocation ? `Hey ${currentUserName}, let's explore ${targetLocation}!` : `Hey ${currentUserName}, let's explore!`,
                         tabBarIcon: function renderExploreTabIconACB({ size }) {
                             return (
                                 <Image

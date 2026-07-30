@@ -1,12 +1,12 @@
 # SoloBuddy, your Travel Safety Companion
 
 <p align="center">
+  <img src="./Solobuddy_ios_demo.gif" width="190" alt="iOS Preview" />
+  <img src="./Solobuddy_android_demo.gif" width="190" alt="Android Preview" />
   <img src="https://github.com/user-attachments/assets/525ab536-5642-4c01-88c0-26c53d024071" width="190" alt="Explore tab with map" />
-<!--   <img src="URL_safety" width="240" alt="Safety advisories and news" /> -->
-  <img src="https://github.com/user-attachments/assets/b4a5a080-f1e6-4620-ac7c-0d54ce424460" width="190" alt="AI-generated itinerary" />
 </p>
 <p align="center">
-  <em>Explore</em> &nbsp;·&nbsp; <em>AI Itinerary</em>
+  <em>iOS Preview</em> &nbsp;·&nbsp; <em>Android Preview</em> &nbsp;·&nbsp; <em>Explore</em>
 </p>
 
 SoloBuddy is a travel companion app built for solo travellers. It combines destination exploration (nearby attractions, maps, search), suggested itinerary creation, a community feed and a dedicated Safety tab surfacing official travel advisories, local news and real time local weather. Save places to your trip wishlist, track what you have visited, and head somewhere new with confidence.
@@ -67,6 +67,8 @@ First, press `s` to ensure the dev server is using **Expo Go**. Then:
 ---
 
 ## 🌐 Web Development & Deployment
+
+> 💡 **Note on Web Version:** The web version of SoloBuddy is provided as a web simulation of the mobile app for easy browser preview and interactive demonstration without needing a physical device or emulator. For the authentic native and bug-free mobile experience with native gestures and maps, download the Android APK in the release page or run via Expo Go on iOS/Android.
 
 ### Local Web Development
 ```bash
