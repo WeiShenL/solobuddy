@@ -37,7 +37,8 @@ jobs:
 
       - name: Verify Web Production Build
         env:
-          EXPO_PUBLIC_FIREBASE_API_KEY: AIzaSyA1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q
+          # Mock 39-character placeholder starting with AIzaSy to satisfy Firebase Auth SDK format validation during build verification
+          EXPO_PUBLIC_FIREBASE_API_KEY: AIzaSyA1b2C3d4E5f6G7h8I9j0K1HELLO4O5p6Q
           EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: __EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN__
           EXPO_PUBLIC_FIREBASE_PROJECT_ID: __EXPO_PUBLIC_FIREBASE_PROJECT_ID__
           EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET: __EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET__

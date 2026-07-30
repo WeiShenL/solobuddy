@@ -6,7 +6,8 @@ echo "Injecting VPS environment variables into static JS bundle..."
 
 find /usr/share/caddy -type f -name "*.js" | while read -r file; do
   if [ -f "$file" ]; then
-    [ -n "$EXPO_PUBLIC_FIREBASE_API_KEY" ] && sed -i "s|AIzaSyA1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q|${EXPO_PUBLIC_FIREBASE_API_KEY}|g" "$file"
+    # Replace mock 39-character placeholder with live VPS environment variable
+    [ -n "$EXPO_PUBLIC_FIREBASE_API_KEY" ] && sed -i "s|AIzaSyA1b2C3d4E5f6G7h8I9j0K1HELLO4O5p6Q|${EXPO_PUBLIC_FIREBASE_API_KEY}|g" "$file"
     [ -n "$EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN" ] && sed -i "s|__EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN__|${EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN}|g" "$file"
     [ -n "$EXPO_PUBLIC_FIREBASE_PROJECT_ID" ] && sed -i "s|__EXPO_PUBLIC_FIREBASE_PROJECT_ID__|${EXPO_PUBLIC_FIREBASE_PROJECT_ID}|g" "$file"
     [ -n "$EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET" ] && sed -i "s|__EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET__|${EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET}|g" "$file"
