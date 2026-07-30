@@ -68,6 +68,8 @@ First, press `s` to ensure the dev server is using **Expo Go**. Then:
 
 ## 🌐 Web Development & Deployment
 
+> 💡 **Note on Web Version:** The web version of SoloBuddy is provided as a web simulation of the mobile app for easy browser preview and interactive demonstration without needing a physical device or emulator. For the authentic native and bug-free mobile experience with native gestures and maps, download the Android APK in the release page or run via Expo Go on iOS/Android.
+
 ### Local Web Development
 ```bash
 # Start Web directly in Expo Go mode (http://localhost:8081)
