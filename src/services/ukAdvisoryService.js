@@ -1,9 +1,13 @@
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebaseModel.js";
+
+// Was a live fetch to gov.uk on every page load — swapped for a Firestore
+// read of a monthly-refreshed cache (see cloud-functions/refreshAdvisories)
+// to stop every visitor from re-triggering the live API.
 export async function fetchUKAdvisoryACB(countrySlug) {
-  const response = await fetch(
-    `https://www.gov.uk/api/content/foreign-travel-advice/${countrySlug}`
-  );
-  if (!response.ok) return null;
-  const data = await response.json();
+  const snapshot = await getDoc(doc(db, "advisories_uk", countrySlug));
+  if (!snapshot.exists()) return null;
+  const data = snapshot.data();
   return {
     countryName: data.details?.country?.name || countrySlug,
     alertStatus: data.details?.alert_status || [],
