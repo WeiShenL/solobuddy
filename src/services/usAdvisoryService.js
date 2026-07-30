@@ -11,10 +11,10 @@ export function isSafeHttpUrl(url) {
   }
 }
 
-// Was a live fetch through a rate-limited third-party proxy holding a
-// hardcoded key — swapped for a Firestore read of a monthly-refreshed
-// cache (see cloud-functions/refreshAdvisories) to stop every visitor from
-// re-triggering the live API and to drop the exposed proxy key entirely.
+// Was a live fetch to gov.us on every page load 
+// However i swapped for a Firestore read of a monthly-refreshed cache 
+// (see cloud-functions/refreshAdvisories)
+// to stop every visitor from re-triggering the live API.
 export async function fetchUSAdvisoryACB(countryId) {
   const snapshot = await getDoc(doc(db, "advisories_us", countryId));
   if (!snapshot.exists()) return null;

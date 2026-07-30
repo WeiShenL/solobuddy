@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { SafetyView } from "../native-views/safetyView.jsx";
 import { getUSAdvisoryId } from "../services/usAdvisoryCountryMap.js";
-import { getUKAdvisorySlug } from "../services/ukAdvisoryCountryMap.js";
 
 const SafetyPresenter = observer(function SafetyPresenter(props) {
   const model = props.model;
@@ -20,29 +19,6 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       console.error("Failed to load weather details:", error);
     }
   }
-  // TODO: this alert might not be needed? or can change a bit
-  async function userWantsToRefreshSafetyAlertsACB() {
-    model.setLoading?.(true);
-    try {
-      if (!model.weatherBannerPromiseState.data) {
-        await userWantsToRefreshWeatherACB();
-      }
-      model.updateWeatherAlerts();
-    } catch (error) {
-      console.error("Failed to refresh safety alerts:", error);
-      model.setWeatherAlerts?.([
-        {
-          event: "Safety alerts unavailable",
-          description:
-            error.message === "Location permission denied"
-              ? "Enable location permission to check alerts for your current area."
-              : "We could not load local safety alerts right now.",
-        },
-      ]);
-    } finally {
-      model.setLoading?.(false);
-    }
-  }
 
   async function userWantsToRefreshNewsACB() {
     try {
@@ -54,7 +30,7 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       const place = [model.currentCity, model.currentCountry].filter(Boolean).join(" ") || null;
       if (!place) return;
       // change here for different query.... but search results arent rlly good tbvh
-      model.fetchNews(`${place} AND (safety OR tourist)`);
+      model.fetchNews(place);
     } catch (error) {
       console.error("Failed to refresh news:", error);
     }
@@ -67,11 +43,12 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       if (!model.weatherAlerts || model.weatherAlerts.length === 0) {
         model.updateWeatherAlerts();
       }
+      // TODO: some countries does not work, especially countries with >=2 words. but for now i will let it slide first..
       // country was resolved by userWantsToRefreshWeatherACB above
-      const country = model.currentCountry;
+      const country = model.currentCountry || model.currentCity;
       if (country) {
-        const slug = getUKAdvisorySlug(country);
-        if (slug) model.fetchTravelAdvisory(slug);
+        const slug = country.toLowerCase().replace(/\s+/g, "-");
+        model.fetchTravelAdvisory(slug);
         const usId = getUSAdvisoryId(country);
         if (usId) model.fetchUSAdvisory(usId);
       }
@@ -123,7 +100,6 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       touristNews={model.newsPromiseState.data || []}
       loadingStatus={model.loadingStatus}
       onOpenWeatherDetails={userWantsToOpenWeatherDetailsACB}
-      onRefreshSafetyAlerts={userWantsToRefreshSafetyAlertsACB}
       onRefreshNews={userWantsToRefreshNewsACB}
     />
   );

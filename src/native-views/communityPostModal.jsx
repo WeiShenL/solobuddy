@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Modal,
   View,
   Text,
   TextInput,
@@ -9,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import AppModal from "./appModal";
 
 const MAX_CHARS = 300;
 
@@ -47,7 +47,7 @@ export default function CommunityPostModal({ visible, onClose, onSubmit }) {
   const remaining = MAX_CHARS - text.length;
 
   return (
-    <Modal
+    <AppModal
       visible={visible}
       transparent
       animationType="slide"
@@ -135,7 +135,7 @@ export default function CommunityPostModal({ visible, onClose, onSubmit }) {
           </View>
         </View>
       </KeyboardAvoidingView>
-    </Modal>
+    </AppModal>
   );
 }
 

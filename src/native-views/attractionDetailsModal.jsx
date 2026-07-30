@@ -1,6 +1,7 @@
 import { useState } from "react";
-import {View, Text,Modal, ScrollView, Pressable, Linking, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable, Linking, StyleSheet, ActivityIndicator } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import AppModal from "./appModal";
 
 function getTodayHoursACB(weekdayDescriptions) {
   if (!weekdayDescriptions?.length) return null;
@@ -41,7 +42,7 @@ export function AttractionDetailsModal({ visible, onClose, attraction, placeDeta
   }
 
   return (
-    <Modal
+    <AppModal
       visible={visible}
       transparent
       animationType="slide"
@@ -250,7 +251,7 @@ export function AttractionDetailsModal({ visible, onClose, attraction, placeDeta
           )}
         </View>
       </View>
-    </Modal>
+    </AppModal>
   );
 }
 
