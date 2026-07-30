@@ -86,8 +86,10 @@ npm run serve:web
 docker compose up -d
 ```
 
-# Start Production Web container on VPS (Co-hosting with Root Caddy)
+### Production VPS Deployment (Co-hosting with Root Caddy)
+```bash
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
 
 ### Production Deployment & CI/CD
 - **CI Workflow ([.github/workflows/ci.yml](file:///Users/weishen/NonSchool/Github/solobuddy/.github/workflows/ci.yml))**: Runs `npm run lint`, `npx expo config`, and `npx expo export --platform web` in 3 parallel jobs on PRs.
@@ -115,3 +117,5 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 | [Firebase Auth](https://firebase.google.com/docs/auth) | User authentication |
 | [Firebase Firestore](https://firebase.google.com/docs/firestore) | User profiles, wishlist, community posts (real-time) |
 | [Firebase Storage](https://firebase.google.com/docs/storage) | Profile photo upload and hosting |
+| [Google Cloud Run / Functions](https://cloud.google.com/run) | Serverless backend execution for travel advisory caching |
+| [Google Cloud Scheduler](https://cloud.google.com/scheduler) | Monthly cron job trigger for advisory cache refreshes |

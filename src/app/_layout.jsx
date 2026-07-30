@@ -97,7 +97,7 @@ export default observer(function RootLayout() {
                     options={{
                         title: "My Trips",
                         headerStyle: {
-                            backgroundColor: "#a61b2e",
+                            backgroundColor: "#7D5A50",
                         },
                         headerTintColor: "#fff", // text color
                         tabBarIcon: function renderWishlistTabIconACB({ size }) {

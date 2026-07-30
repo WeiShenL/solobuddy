@@ -4,9 +4,9 @@ import {
   Text,
   Pressable,
   ScrollView,
-  Modal,
   ActivityIndicator,
 } from "react-native";
+import AppModal from "./appModal";
 import { openURL } from "expo-linking";
 import { isSafeHttpUrl } from "../services/usAdvisoryService.js";
 import Svg, { Defs, LinearGradient, Stop, Path, Circle } from "react-native-svg";
@@ -371,7 +371,7 @@ export function SafetyView(props) {
         </View>
       </ScrollView>
 
-      <Modal
+      <AppModal
         visible={weatherModalVisible}
         transparent
         animationType="slide"
@@ -587,7 +587,7 @@ export function SafetyView(props) {
             </ScrollView>
           </View>
         </View>
-      </Modal>
+      </AppModal>
     </View>
   );
 }
