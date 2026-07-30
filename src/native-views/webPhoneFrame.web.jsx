@@ -1,35 +1,18 @@
 import { View } from "react-native";
+import "react-mockframe/styles/mockframe-iphones.css";
+import { MockFrame } from "react-mockframe";
 
-// - "rn"        : react-native-device-mockup — pure RN Views
-// - "mockframe" : react-mockframe — DOM-based, iPhone 17 w/ Dynamic Island.
-
-const VARIANT = "mockframe";
+// can consider this in the future, but i think for now rn is better
+// "rn": react-native-device-mockup — pure RN Views
 
 export function WebPhoneFrame({ children }) {
-    return <View style={styles.backdrop}>{renderVariant(children)}</View>;
-}
-
-function renderVariant(children) {
-    switch (VARIANT) {
-        case "mockframe": {
-            require("react-mockframe/styles/mockframe-iphones.css");
-            const { MockFrame } = require("react-mockframe");
-            return (
-                <MockFrame device="iPhone 17" width={393} height={852}>
-                    <View style={{ width: "100%", height: "100%", paddingTop: 59 }}>{children}</View>
-                </MockFrame>
-            );
-        }
-        case "rn":
-        default: {
-            const { IPhoneMockup } = require("react-native-device-mockup");
-            return (
-                <IPhoneMockup screenWidth={390} screenType="island">
-                    {children}
-                </IPhoneMockup>
-            );
-        }
-    }
+    return (
+        <View style={styles.backdrop}>
+            <MockFrame device="iPhone 17" width={393} height={852}>
+                <View style={{ width: "100%", height: "100%", paddingTop: 59 }}>{children}</View>
+            </MockFrame>
+        </View>
+    );
 }
 
 const styles = {
