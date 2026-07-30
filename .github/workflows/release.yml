@@ -46,7 +46,7 @@ jobs:
             ghcr.io/weishenl/solobuddy-web:latest
             ghcr.io/weishenl/solobuddy-web:${{ github.sha }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
 
   build-android-apk:
     name: Build & Release Android APK
