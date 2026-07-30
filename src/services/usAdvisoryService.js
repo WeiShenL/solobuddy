@@ -1,18 +1,16 @@
-// i used proxy for this cos somehow it wont work without it. 
-// But i wont be putting it inside the .env file
-// TODO: move to .env
-const PROXY_URL = "https://brfenergi.se/iprog/group/541/";
-const PROXY_KEY = "3d2a031b4cmsh5cd4e7b939ada54p19f679jsn9a775627d767";
-const PROXY_GROUP = "541";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebaseModel.js";
 
+// Was a live fetch through a rate-limited third-party proxy holding a
+// hardcoded key — swapped for a Firestore read of a monthly-refreshed
+// cache (see cloud-functions/refreshAdvisories) to stop every visitor from
+// re-triggering the live API and to drop the exposed proxy key entirely.
 export async function fetchUSAdvisoryACB(countryId) {
-  const response = await fetch(
-    `${PROXY_URL}https://cadataapi.state.gov/api/TravelAdvisories/${countryId}`,
-    { headers: { "X-DH2642-Key": PROXY_KEY, "X-DH2642-Group": PROXY_GROUP } }
-  );
-  if (!response.ok) return null;
-  const data = await response.json();
-  console.log("[US advisory] raw:", JSON.stringify(data).substring(0, 300));
+  const snapshot = await getDoc(doc(db, "advisories_us", countryId));
+  if (!snapshot.exists()) return null;
+  // Firestore documents can't store a bare array at the root, so the cloud
+  // function wraps the original single-country array as { entries: [...] }.
+  const data = snapshot.data().entries;
 
   const entry = Array.isArray(data) ? data[0] : data;
   if (!entry?.Title) return null;

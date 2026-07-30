@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { SafetyView } from "../native-views/safetyView.jsx";
 import { getUSAdvisoryId } from "../services/usAdvisoryCountryMap.js";
+import { getUKAdvisorySlug } from "../services/ukAdvisoryCountryMap.js";
 
 const SafetyPresenter = observer(function SafetyPresenter(props) {
   const model = props.model;
@@ -66,12 +67,11 @@ const SafetyPresenter = observer(function SafetyPresenter(props) {
       if (!model.weatherAlerts || model.weatherAlerts.length === 0) {
         model.updateWeatherAlerts();
       }
-      // TODO: some countries does not work, especially countries with >=2 words. but for now i will let it slide first..
       // country was resolved by userWantsToRefreshWeatherACB above
       const country = model.currentCountry;
       if (country) {
-        const slug = country.toLowerCase().replace(/\s+/g, "-");
-        model.fetchTravelAdvisory(slug);
+        const slug = getUKAdvisorySlug(country);
+        if (slug) model.fetchTravelAdvisory(slug);
         const usId = getUSAdvisoryId(country);
         if (usId) model.fetchUSAdvisory(usId);
       }

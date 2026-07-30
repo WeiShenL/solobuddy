@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import { connectToAuth } from "/src/firebaseModel.js";
 import AuthPresenter from "../presenters/authPresenter.jsx";
 import { Image } from "react-native"
+import { WebPhoneFrame } from "../native-views/webPhoneFrame"
 
 export default observer(function RootLayout() {
     // aft app mounts, set up the firebase auth state observer 
@@ -15,20 +16,21 @@ export default observer(function RootLayout() {
         return unsubscribe;
     }, []);
 
-    // firebase resolve the initial auth state 
+    // firebase resolve the initial auth state
     if (!model.ready) {
-        return <Text>Loading...</Text>;
+        return <WebPhoneFrame><Text>Loading...</Text></WebPhoneFrame>;
     }
 
     // show auth screen if not logged in
     if (!model.currentUser) {
-        return <AuthPresenter model={model} />;
+        return <WebPhoneFrame><AuthPresenter model={model} /></WebPhoneFrame>;
     }
 
     const currentUserName = model.profile?.name || "there";
 
     // logged in
     return (
+        <WebPhoneFrame>
         <Tabs>
             <Tabs.Screen 
                 name="index" 
@@ -130,5 +132,6 @@ export default observer(function RootLayout() {
                 }}
             />
         </Tabs>
+        </WebPhoneFrame>
     );
 });
