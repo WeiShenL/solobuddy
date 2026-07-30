@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { openURL } from "expo-linking";
+import { isSafeHttpUrl } from "../services/usAdvisoryService.js";
 import Svg, { Defs, LinearGradient, Stop, Path, Circle } from "react-native-svg";
 import styles from "./safetyView.styles.js";
 
@@ -260,7 +261,11 @@ export function SafetyView(props) {
                   </Text>
                 </View>
                 <Pressable
-                  onPress={function openUSAdvisoryACB() { openExternalLinkACB(props.usAdvisory.webUrl); }}
+                  onPress={function openUSAdvisoryACB() {
+                    if (props.usAdvisory?.webUrl && isSafeHttpUrl(props.usAdvisory.webUrl)) {
+                      openURL(props.usAdvisory.webUrl);
+                    }
+                  }}
                   style={styles.advisoryIconBtn}
                 >
                   <Text style={styles.advisoryIconText}>↗</Text>
@@ -286,7 +291,11 @@ export function SafetyView(props) {
                 </View>
                 {/* will only show if there is warning  */}
                 <Pressable
-                  onPress={function openAdvisoryACB() { openURL(props.travelAdvisory.webUrl); }}
+                  onPress={function openAdvisoryACB() {
+                    if (props.travelAdvisory?.webUrl && isSafeHttpUrl(props.travelAdvisory.webUrl)) {
+                      openURL(props.travelAdvisory.webUrl);
+                    }
+                  }}
                   style={styles.advisoryIconBtn}
                 >
                   <Text style={styles.advisoryIconText}>↗</Text>

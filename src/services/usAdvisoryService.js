@@ -1,6 +1,16 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebaseModel.js";
 
+export function isSafeHttpUrl(url) {
+  if (!url || typeof url !== "string") return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 // Was a live fetch through a rate-limited third-party proxy holding a
 // hardcoded key — swapped for a Firestore read of a monthly-refreshed
 // cache (see cloud-functions/refreshAdvisories) to stop every visitor from
@@ -18,5 +28,6 @@ export async function fetchUSAdvisoryACB(countryId) {
   const level = Number(entry.Title.match(/Level (\d)/)?.[1]) || null;
   const levelLabel = entry.Title.match(/Level \d+:\s*(.+)/)?.[1]?.trim() || null;
 
-  return { level, levelLabel, updatedAt: entry.Updated || null, webUrl: entry.Link || null };
+  const webUrl = entry.Link && isSafeHttpUrl(entry.Link) ? entry.Link : null;
+  return { level, levelLabel, updatedAt: entry.Updated || null, webUrl };
 }

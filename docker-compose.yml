@@ -1,0 +1,10 @@
+# for testing production caddy web container
+services:
+  solobuddy-web:
+    container_name: solobuddy-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    restart: unless-stopped

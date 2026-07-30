@@ -64,6 +64,36 @@ First, press `s` to ensure the dev server is using **Expo Go**. Then:
 
 > **Note:** If the terminal prompts `It is recommended to log in with your Expo account before proceeding`, just select **Proceed anonymously**.
 
+---
+
+## 🌐 Web Development & Deployment
+
+### Local Web Development
+```bash
+# Start Web directly in Expo Go mode (http://localhost:8081)
+npm run web
+```
+
+### Local Production Web Testing
+```bash
+# 1. Export static production web bundle to dist/
+npx expo export --platform web
+
+# 2. Serve static bundle locally (http://localhost:3000)
+npm run serve:web
+
+# 3. Test Production Caddy container in Docker (http://localhost:8080)
+docker compose up -d
+```
+
+# Start Production Web container on VPS (Co-hosting with Root Caddy)
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+### Production Deployment & CI/CD
+- **CI Workflow ([.github/workflows/ci.yml](file:///Users/weishen/NonSchool/Github/solobuddy/.github/workflows/ci.yml))**: Runs `npm run lint`, `npx expo config`, and `npx expo export --platform web` in 3 parallel jobs on PRs.
+- **Release Workflow ([.github/workflows/release.yml](file:///Users/weishen/NonSchool/Github/solobuddy/.github/workflows/release.yml))**: Builds Caddy Web Docker image for **Watchtower** auto-deploy and compiles Android `.apk` on Expo EAS cloud.
+---
+
 ## Tech Stack
 
 - [React Native](https://reactnative.dev/) + [Expo SDK 54](https://expo.dev/)
