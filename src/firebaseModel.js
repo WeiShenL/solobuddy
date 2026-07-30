@@ -31,13 +31,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { firebaseConfig } from "./firebaseConfig.js";
 
-// I made some changes here to make it easier for testing when swtiching bnetween rpoject ids. (i had some issues)
-const existingApp = getApps().find(
-  (appInstance) => appInstance.options.projectId === firebaseConfig.projectId
-);
-const app = existingApp ?? initializeApp(firebaseConfig, firebaseConfig.projectId);
+const existingApp = getApps()[0];
+const app = existingApp ?? initializeApp(firebaseConfig);
 
-// for debug, for some reason on my phone I'm still connected to the prev firebase
 // console.log("Firebase Project ID:", app.options.projectId);
 // console.log("Firebase API Key:", app.options.apiKey);
 
