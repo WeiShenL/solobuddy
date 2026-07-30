@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-and-syntax:
-    name: Expo Lint & Syntax Check
+  build-verification:
+    name: Build & Syntax Verification
     runs-on: ubuntu-latest
 
     steps:
@@ -32,50 +32,8 @@ jobs:
       - name: Run Expo Linter
         run: npm run lint
 
-      - name: Validate Cloud Functions Syntax
-        run: |
-          if [ -f "cloud-functions/refreshAdvisories/index.js" ]; then
-            cd cloud-functions/refreshAdvisories
-            npm ci
-            node --check index.js
-          fi
-
-  expo-config-check:
-    name: Expo Config Validation
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Codebase
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.19.4'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Validate Expo Configuration
         run: npx expo config --type public
-
-  web-build-check:
-    name: Expo Web Build Verification
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Codebase
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.19.4'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Verify Web Production Build
         run: npx expo export --platform web

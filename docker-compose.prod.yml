@@ -1,0 +1,24 @@
+# Production Overrides for SoloBuddy Stack
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+name: solobuddy
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  solobuddy-web:
+    container_name: solobuddy-web
+    logging: *default-logging
+    ports: [] # Public ports 80/443 are owned by Root Caddy on VPS
+    networks:
+      - default
+      - web-gateway
+    restart: always
+
+networks:
+  web-gateway:
+    external: true
