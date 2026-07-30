@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import * as ImagePicker from "expo-image-picker";
-import { AuthView } from "/src/native-views/authView.jsx";
+import { AuthView } from "../native-views/authView.jsx";
 
 // handles both login, register, logout.
 //   props.model - the reactive MobX model
