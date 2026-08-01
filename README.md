@@ -95,7 +95,7 @@ docker compose up -d
 
 ### Production VPS Deployment (Co-hosting with Root Caddy)
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
 ```
 
 ### Production CI/CD Pipelines

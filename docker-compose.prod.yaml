@@ -1,5 +1,5 @@
 # Production Overrides for SoloBuddy Stack
-# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d 
+# Usage: docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
 
 name: solobuddy
 
@@ -19,6 +19,10 @@ services:
     env_file:
       - .env
     logging: *default-logging
+    # Watchtower only updates containers carrying this label. Without it SoloBuddy is skipped
+    # silently and never auto-deploys.
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     ports: !reset [] # Public ports 80/443 are owned by Root Caddy on VPS
     networks:
       - default
