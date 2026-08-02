@@ -9,7 +9,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "lint": "expo lint",
-    "prd-web": "docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d"
+    "prd-web": "docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d",
+    "deploy": "docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d --pull always --no-build"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
