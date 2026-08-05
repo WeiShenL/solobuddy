@@ -11,6 +11,13 @@
 
 SoloBuddy is a travel companion app built for solo travellers. It combines destination exploration (nearby attractions, maps, search), suggested itinerary creation, a community feed and a dedicated Safety tab surfacing official travel advisories, local news and real time local weather. Save places to your trip wishlist, track what you have visited, and head somewhere new with confidence.
 
+## Tech Stack
+
+- [React Native](https://reactnative.dev/) + [Expo SDK 54](https://expo.dev/)
+- [Expo Router](https://expo.github.io/router/) — file-based navigation
+- [MobX](https://mobx.js.org/) — reactive state management
+- [react-native-maps](https://github.com/react-native-maps/react-native-maps) Allows for native map rendering on iOS & Android (IOS: Apple Maps, Android: Google Maps)
+
 ## Try the App (Android)
 
 Download the latest Android APK from our GitHub releases page:
@@ -76,12 +83,6 @@ First, press `s` to ensure the dev server is using **Expo Go**. Then:
 npm run web
 ```
 
-### Production Docker & Runtime `.env` Injection
-
-SoloBuddy uses **Runtime `.env` Injection** for production web deployments:
-- **Runtime `.env` Substitution (`docker-entrypoint.sh`)**: At container boot on your VPS, `/docker-entrypoint.sh` reads VPS's `.env` file and substitutes live environment variables into static JS files before launching Caddy (~40ms).
-- **Watchtower Auto-Deploy**: Watchtower polls GHCR and auto-deploys new releases to VPS with zero manual intervention.
-
 ### Local Production Web Testing
 
 ```bash
@@ -92,23 +93,6 @@ npm run serve:web
 # Option B: Test via Docker Compose with Caddy (http://localhost:8080)
 docker compose up -d
 ```
-
-### Production VPS Deployment (Co-hosting with Root Caddy)
-```bash
-docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
-```
-
-### Production CI/CD Pipelines
-- **CI Workflow ([.github/workflows/ci.yml](file:///Users/weishen/NonSchool/Github/solobuddy/.github/workflows/ci.yml))**: Runs `npm run lint`, `npx expo config`, and `npx expo export --platform web` build verification on Pull Requests.
-- **Release Workflow ([.github/workflows/release.yml](file:///Users/weishen/NonSchool/Github/solobuddy/.github/workflows/release.yml))**: Builds barebones Caddy Web Docker image for GHCR/Watchtower and compiles native Android `.apk` releases on merge to `main`.
----
-
-## Tech Stack
-
-- [React Native](https://reactnative.dev/) + [Expo SDK 54](https://expo.dev/)
-- [Expo Router](https://expo.github.io/router/) — file-based navigation
-- [MobX](https://mobx.js.org/) — reactive state management
-- [react-native-maps](https://github.com/react-native-maps/react-native-maps) — native map rendering on iOS & Android (IOS: Apple Maps, Android: Google Maps)
 
 ## External APIs
 
@@ -126,3 +110,41 @@ docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
 | [Firebase Storage](https://firebase.google.com/docs/storage) | Profile photo upload and hosting |
 | [Google Cloud Run / Functions](https://cloud.google.com/run) | Serverless backend execution for travel advisory caching |
 | [Google Cloud Scheduler](https://cloud.google.com/scheduler) | Monthly cron job trigger for advisory cache refreshes |
+
+### Local Co-hosting Test (Root Caddy, prod-style)
+
+For reference, the root Caddy stack lives in its own repo:
+[`vps-infra-portfolio`](https://github.com/WeiShenL/vps-infra-portfolio).
+
+```bash
+# 1. Clone the root infra repo
+git clone https://github.com/WeiShenL/vps-infra-portfolio.git
+
+# 2. Create the shared network the root stack and every app container join
+docker network create web-gateway
+
+# 3. Start the root stack locally
+cd vps-infra-portfolio
+docker compose -f docker-compose.local.yaml up -d
+
+# 4. Back out and clone SoloBuddy (skip if you already have it)
+cd ..
+git clone https://github.com/WeiShenL/solobuddy.git
+cd solobuddy
+
+# 5. Deploy SoloBuddy the same way prod does
+npm run deploy
+```
+
+Served at: http://solo.localhost:8080
+
+### Production Docker & Runtime `.env` Injection
+
+SoloBuddy uses **Runtime `.env` Injection** for production web deployments:
+- **Runtime `.env` Substitution (`docker-entrypoint.sh`)**: At container boot on your VPS, `/docker-entrypoint.sh` reads VPS's `.env` file and substitutes live environment variables into static JS files before launching Caddy (~40ms).
+- **Watchtower Auto-Deploy**: Watchtower polls GHCR and auto-deploys new releases to VPS with zero manual intervention.
+
+### Production CI/CD Pipelines
+- **CI Workflow ([.github/workflows/ci.yml](file:///Users/weishen/NonSchool/Github/solobuddy/.github/workflows/ci.yml))**: Runs `npm run lint`, `npx expo config`, and `npx expo export --platform web` build verification on Pull Requests.
+- **Release Workflow ([.github/workflows/release.yml](file:///Users/weishen/NonSchool/Github/solobuddy/.github/workflows/release.yml))**: Builds barebones Caddy Web Docker image for GHCR/Watchtower and compiles native Android `.apk` releases on merge to `main`.
+---
