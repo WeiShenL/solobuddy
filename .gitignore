@@ -41,7 +41,8 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env*
+!.env.example
 android/local.properties
 
 # typescript
@@ -54,3 +55,4 @@ expo-env.d.ts
 # @end expo-cli
 
 docs/
+
