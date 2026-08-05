@@ -21,7 +21,7 @@ const NARROW_BREAKPOINT = 700;
 function Disclaimer() {
     return (
         <Text style={styles.disclaimer}>
-            This is a mobile app. This web page is a mock to preview how it looks and feels on a phone. For the
+            This is a mobile app. This web page is to preview how it looks and feels on a phone. For the
             full experience, please see the{" "}
             <Text
                 href="https://github.com/WeiShenL/solobuddy/releases/latest"
@@ -34,7 +34,7 @@ function Disclaimer() {
             <Text href="https://github.com/WeiShenL/solobuddy" target="_blank" style={styles.disclaimerLink}>
                 GitHub repo
             </Text>{" "}
-            for Expo Go instructions.
+            for Expo Go instructions or open this page on your mobile device. Thank you!
         </Text>
     );
 }
