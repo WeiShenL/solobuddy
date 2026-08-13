@@ -12,8 +12,9 @@ const FRAME_WIDTH = SCREEN_WIDTH + BEZEL * 2;
 const FRAME_HEIGHT = SCREEN_HEIGHT + BEZEL * 2;
 
 const GUTTER = 16;
-// reserved height so the text never sits on the frame
-const DISCLAIMER_BLOCK = 56; 
+// reserved height so the text never sits on the frame.
+const DISCLAIMER_BLOCK = 48;
+const DISCLAIMER_MAX_WIDTH = 1000;
 const GAP = 12;
 // below this the mock frame adds nothing 
 const NARROW_BREAKPOINT = 700;
@@ -34,7 +35,7 @@ function Disclaimer() {
             <Text href="https://github.com/WeiShenL/solobuddy" target="_blank" style={styles.disclaimerLink}>
                 GitHub repo
             </Text>{" "}
-            for Expo Go instructions or open this page on your mobile device. Thank you!
+            for Expo Go instructions or open this webpage on your mobile device. Thank you!
         </Text>
     );
 }
@@ -66,10 +67,15 @@ export function WebPhoneFrame({ children }) {
             <View style={styles.disclaimerBlock}>
                 <Disclaimer />
             </View>
-            {/* zoom is a transform (origin top-left), so it doesn't shrink the layout
-                box. this wrapper carries the scaled size so centering stays correct. */}
             <View style={{ width: FRAME_WIDTH * zoom, height: FRAME_HEIGHT * zoom }}>
-                <MockFrame device="iPhone 17" width={SCREEN_WIDTH} height={SCREEN_HEIGHT} zoom={zoom} animated>
+                <MockFrame
+                    device="iPhone 17"
+                    width={SCREEN_WIDTH}
+                    height={SCREEN_HEIGHT}
+                    zoom={zoom}
+                    animated
+                    style={{ transformOrigin: "top left" }}
+                >
                     <View style={{ width: "100%", height: "100%", paddingTop: 59 }}>{children}</View>
                 </MockFrame>
             </View>
@@ -89,7 +95,7 @@ const styles = {
     },
     disclaimerBlock: {
         height: DISCLAIMER_BLOCK,
-        maxWidth: 640,
+        maxWidth: DISCLAIMER_MAX_WIDTH,
         justifyContent: "center",
     },
     disclaimer: {
