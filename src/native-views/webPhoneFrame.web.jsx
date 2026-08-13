@@ -74,7 +74,7 @@ export function WebPhoneFrame({ children }) {
                     height={SCREEN_HEIGHT}
                     zoom={zoom}
                     animated
-                    style={{ transformOrigin: "top left" }}
+                    style={{ transformOrigin: "top left", flexShrink: 0 }}
                 >
                     <View style={{ width: "100%", height: "100%", paddingTop: 59 }}>{children}</View>
                 </MockFrame>
