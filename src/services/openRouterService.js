@@ -65,7 +65,6 @@ export async function generateItineraryACB(items) {
 
   console.log("OpenRouter response status:", response.status);
   console.log("OpenRouter model used:", MODEL);
-  console.log("OpenRouter key present:", Boolean(OPENROUTER_API_KEY), "prefix:", OPENROUTER_API_KEY?.slice(0, 10));
 
   if (!response.ok) {
     const errorBody = await response.text();
