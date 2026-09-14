@@ -126,14 +126,31 @@ jobs:
           git tag v${{ steps.bump.outputs.version }}
           git push origin v${{ steps.bump.outputs.version }}
 
+      # standard text + the description typed when merging the PR (skipped if empty)
+      - name: Write release notes
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          DESCRIPTION=$(git log -1 --format=%b "$MERGE_SHA")
+          {
+            echo "SoloBuddy is a travel companion app built for travellers."
+            echo "Latest Version: v$VERSION"
+            echo "Android only APK, sideload."
+            if [ -n "$DESCRIPTION" ]; then
+              echo ""
+              echo "## Latest v$VERSION Release"
+              echo ""
+              printf '%s\n' "$DESCRIPTION"
+            fi
+          } > release-notes.md
+          cat release-notes.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.bump.outputs.version }}
           name: Solobuddy v${{ steps.bump.outputs.version }}
           target_commitish: main
-          body: |
-            SoloBuddy is a travel companion app built for travellers.
-            Latest Version: v${{ steps.bump.outputs.version }}
-            Android only APK, sideload.
+          body_path: release-notes.md
           files: solobuddy.v${{ steps.bump.outputs.version }}.apk
