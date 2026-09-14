@@ -3,7 +3,7 @@ export default {
   expo: {
     name: "SoloBuddy",
     slug: "solobuddy",
-    version: "1.0.12",
+    version: "1.1.0",
     orientation: "portrait",
     scheme: "solobuddy",
     assetBundlePatterns: ["**/*"],
