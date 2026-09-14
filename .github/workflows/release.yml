@@ -75,7 +75,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       # PR label decides the bump: "major" -> 2.0.0, "minor" -> 1.1.0, "patch" or no label -> 1.0.13
-      # if several are set the biggest wins (major > minor > patch)
+      # if several are set the biggest wins (major > minor > patch) 
       - name: Bump version
         id: bump
         env:
