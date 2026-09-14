@@ -74,15 +74,27 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Bump patch version
+      # PR label decides the bump: "major" -> 2.0.0, "minor" -> 1.1.0, "patch" or no label -> 1.0.13
+      # if several are set the biggest wins (major > minor > patch)
+      - name: Bump version
         id: bump
+        env:
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
         run: |
           CURRENT=$(grep -m1 -oE 'version: *"[0-9]+\.[0-9]+\.[0-9]+"' app.config.js | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-          NEW=$(node -e "
-            const p = '$CURRENT'.split('.').map(Number);
-            p[2] += 1;
-            console.log(p.join('.'));
-          ")
+          case ",$PR_LABELS," in
+            *,major,*) BUMP=major ;;
+            *,minor,*) BUMP=minor ;;
+            *) BUMP=patch ;; # "patch" label or no label
+          esac
+          NEW=$(node -e '
+            const [major, minor, patch] = process.argv[1].split(".").map(Number);
+            const bump = process.argv[2];
+            if (bump === "major") console.log(`${major + 1}.0.0`);
+            else if (bump === "minor") console.log(`${major}.${minor + 1}.0`);
+            else console.log(`${major}.${minor}.${patch + 1}`);
+          ' "$CURRENT" "$BUMP")
+          echo "Bumping $CURRENT -> $NEW ($BUMP, labels: ${PR_LABELS:-none})"
           sed -i "s/version: \"$CURRENT\"/version: \"$NEW\"/" app.config.js
           echo "version=$NEW" >> "$GITHUB_OUTPUT"
 
