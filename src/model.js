@@ -6,7 +6,7 @@ import { fetchAttractionsACB, fetchPlaceDetailsACB } from "./services/placesServ
 import { fetchNewsACB } from "./services/newsService.js";
 import { fetchUKAdvisoryACB } from "./services/ukAdvisoryService.js";
 import { fetchUSAdvisoryACB } from "./services/usAdvisoryService.js";
-import { generateItineraryACB } from "./services/openRouterService.js";
+import { generateItineraryACB } from "./services/itineraryService.js";
 import {
   signInWithEmail,
   signUpWithEmail,
